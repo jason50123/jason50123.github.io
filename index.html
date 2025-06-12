@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=350, initial-scale=1.0">
+    <title>好運貓貓祝福</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background:
+                radial-gradient(circle at 80% 10%, #d6f3fc 0%, transparent 70%),
+                radial-gradient(circle at 20% 80%, #b3e4fc 0%, transparent 75%),
+                linear-gradient(135deg, #a7e9f7 0%, #b3e5fc 60%, #e0f7fa 100%);
+        }
+
+        .card-container {
+            perspective: 1200px;
+            width: 100%;
+            max-width: 400px;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            min-height: 420px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+            transition: transform 0.5s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            will-change: transform;  /* GPU加速 */
+        }
+
+        .card.flipping {
+            transform: rotateY(180deg) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+        }
+
+        .card-img {
+            width: 80%;
+            max-width: 300px;
+            border-radius: 15px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            object-fit: cover;
+            aspect-ratio: 1/1;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .loading-img {
+            width: 80%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+            background: #eee;
+            border-radius: 15px;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #b3e4fc;
+        }
+
+        h1 {
+            color: #0097b2;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .paw {
+            color: #0097b2;
+            font-size: 2rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .paw:hover {
+            transform: scale(1.5);
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .signature {
+            font-style: italic;
+            color: #888;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1s;
+        }
+
+        .thanks {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card" id="card">
+        </div>
+    </div>
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-cute.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        const pages = [
+            {
+            cover: true,
+            content: `
+            <div style="text-align:center; position:relative;">
+                <div style="font-size:2.2rem;margin-bottom:8px;">
+                    <span style="font-size:1.6rem;vertical-align:middle;opacity:0.7;">🐾</span>
+                    <span style="font-size:1.6rem;vertical-align:middle;opacity:0.7;margin-left:14px;">🐾</span>
+                </div>
+                <div style="
+                    font-size:2.7rem;
+                    font-weight:bold;
+                    color:#0097b2;
+                    letter-spacing:3px;
+                    line-height:1.25;
+                    text-shadow: 1px 3px 12px #ccecf9;
+                    margin-bottom: 10px;">
+                    期末歐趴卡
+                </div>
+                <div style="margin: 8px 0 12px 0;">
+                    <span style="display:inline-block;font-size:1.2rem;opacity:0.90;color:#006d8f;">
+                        點擊卡片解鎖貓貓的好運buff ✨<br>
+                        <span style="font-size:1.05rem;color:#888;">（聽說看到這張卡的人，期末都能神奇All Pass！）</span>
+                    </span>
+                </div>
+                <div style="margin: 18px 0 8px 0;">
+                    <span style="font-size:2.4rem;">🐱</span>
+                </div>
+                <div style="font-size:1.1rem; color:#444; margin-top:12px;">
+                    點擊解鎖更多🥳
+                </div>
+                <div style="position:absolute;left:-8px;bottom:16px;font-size:1.6rem;opacity:0.16;transform:rotate(-12deg);">🐾🐾</div>
+                <div style="position:absolute;right:-8px;top:38px;font-size:1.7rem;opacity:0.13;transform:rotate(17deg);">🐾🐾</div>
+            </div>
+            `
+        }
+
+        ,
+            {
+                img: 'img/IMG_2473.jpg',
+                title: '好運貓貓降臨！',
+                text: [
+                    '準備期末的路上辛苦惹，所以我派出這隻神奇貓貓幫你加持！',
+                    '據說看見牠的人都會順利 All Pass 喔，期末考一定順利～',
+                    
+                ],
+                signature: '考完肯定像這樣先睡一波'
+            },
+            {
+                img: 'img/IMG_2470.jpg',
+                title: '天天微笑喵～',
+                text: [
+                    '讀書讀得很累的時候可以看一下這隻可愛貓貓',
+                    '保證直接沒有煩惱（？'
+                ],
+                signature: '偷偷送上快樂 buff'
+            },
+            {
+                img: 'img/IMG_5218.jpg',
+                title: '期末考幸運加成！',
+                text: [
+                    '看到這裡就表示你已經成功獲得好運貓貓 buff！',
+                    '期末一定會順順利利的呦！！'
+                ],
+                signature: '這應該是考完的表情ww'
+            },
+            {
+        end: true,
+        content: `
+            <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+            <div style="margin-top:40px;">
+                <div style="font-size:2.2rem; color:#0097b2; letter-spacing:4px; font-weight:bold; margin-bottom: 16px;">
+                THE END <span style="font-size:1.8rem;">🐱</span>
+                </div>
+                <div style="font-size:1.18rem; margin-bottom:18px; color:#222;">
+                最後一頁嚕！
+                </div>
+                <div style="font-size:1.08rem; color:#333;">
+                期末一定會順利，<br>
+                解鎖更多好運貓貓💖<br>
+                不要忘記睡覺，考試加油！
+                </div>
+            </div>
+            <div style="flex-grow:1"></div>
+            <div style="margin-bottom:10px;opacity:0.17;font-size:2.1rem;">
+                🐾🐾🐾🐾🐾
+            </div>
+            </div>
+        `
+        }
+
+
+        ];
+
+        pages.forEach(page => {
+            if (page.img) {
+                const img = new Image();
+                img.src = page.img;
+            }
+        });
+
+        const FLIP_DURATION = 500;
+        let currentPage = 0;
+        let flipping = false;
+
+        function renderPage(idx) {
+            const card = document.getElementById('card');
+            const page = pages[idx];
+            if(page.cover || page.end) {
+                card.innerHTML = page.content;
+            } else {
+                const img = new Image();
+                img.src = page.img;
+                img.onload = () => {
+                    card.innerHTML = `
+                        <img src="${page.img}" class="card-img" alt="cat">
+                        <h1>${page.title}</h1>
+                        ${page.text.map((t,i)=>`<p style="animation-delay:${i*0.3}s">${t}</p>`).join('')}
+                        <div class="paw" onclick="this.style.color = '#' + Math.floor(Math.random()*16777215).toString(16)">🐾</div>
+                        <p class="signature">${page.signature}</p>
+                    `;
+                };
+                img.onerror = () => {
+                    card.innerHTML = `
+                        <div class="loading-img">😿 圖片載入失敗</div>
+                        <h1>${page.title}</h1>
+                        ${page.text.map((t,i)=>`<p style="animation-delay:${i*0.3}s">${t}</p>`).join('')}
+                        <div class="paw" onclick="this.style.color = '#' + Math.floor(Math.random()*16777215).toString(16)">🐾</div>
+                        <p class="signature">${page.signature}</p>
+                    `;
+                };
+                card.innerHTML = `
+                    <div class="loading-img">⏳</div>
+                    <h1>${page.title}</h1>
+                `;
+            }
+        }
+
+        function flipToNext() {
+            if (flipping) return;
+            flipping = true;
+            const card = document.getElementById('card');
+
+            currentPage = (currentPage + 1) % pages.length;
+            renderPage(currentPage);
+
+            card.classList.add('flipping');
+            setTimeout(() => {
+                if (currentPage === 1) { 
+                    const music = document.getElementById('bgMusic');
+                    if (music.paused) {
+                        music.play().catch(()=>{});
+                    }
+                }
+                card.classList.remove('flipping');
+                flipping = false;
+            }, FLIP_DURATION);
+        }
+
+
+        document.getElementById('card').addEventListener('click', flipToNext);
+
+        renderPage(currentPage);
+    </script>
+</body>
+</html>
